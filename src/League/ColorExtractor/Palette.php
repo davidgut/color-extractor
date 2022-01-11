@@ -7,6 +7,11 @@ class Palette implements \Countable, \IteratorAggregate
     /** @var array */
     protected $colors;
 
+    protected function __construct()
+    {
+        $this->colors = [];
+    }
+
     /**
      * @return int
      */
@@ -68,9 +73,10 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromGD($image, $backgroundColor = null)
     {
-        if (!is_resource($image) || get_resource_type($image) != 'gd') {
+        if (!$image instanceof \GDImage && (!is_resource($image) || 'gd' !== get_resource_type($image))) {
             throw new \InvalidArgumentException('Image must be a gd resource');
         }
+
         if ($backgroundColor !== null && (!is_numeric($backgroundColor) || $backgroundColor < 0 || $backgroundColor > 16777215)) {
             throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
@@ -117,10 +123,5 @@ class Palette implements \Countable, \IteratorAggregate
         arsort($palette->colors);
 
         return $palette;
-    }
-
-    protected function __construct()
-    {
-        $this->colors = [];
     }
 }
